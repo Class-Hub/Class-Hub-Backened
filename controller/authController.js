@@ -1,16 +1,16 @@
-const User = require("../models/User");
+const Student = require("../models/Student");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const register = (req, res) => {
-  User.findOne({ email: req.body.email }).exec((err, user) => {
+  Student.findOne({ email: req.body.email }).exec((err, student) => {
     if(err){
       return res.status(400).json({
         status: "error",
         message: "Some Error",
       });
     }else{
-      if(user){
+      if(student){
         return res.status(400).json({
           status: "error",
           message: "Email already exists",
@@ -24,13 +24,13 @@ const register = (req, res) => {
             message: "Failed",
           });
         }
-      let user = new User({
+      let student = new Student({
         email: req.body.email,
         password: hashedPassword,
       });
-      user
+      student
         .save()
-        .then((user) => {
+        .then((student) => {
           res.status(200).json({
             status: "success",
             message: "Successfully registered",
@@ -53,9 +53,9 @@ const login = (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
 
-  User.findOne({ email: email }).then((user) => {
-    if (user) {
-      bcrypt.compare(password, user.password, (err, result) => {
+  Student.findOne({ email: email }).then((student) => {
+    if (student) {
+      bcrypt.compare(password, student.password, (err, result) => {
         if (err) {
           res.status(400).json({
             status: "error",
@@ -63,7 +63,7 @@ const login = (req, res) => {
           });
         }
         if (result) {
-          var token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+          var token = jwt.sign({ id: student._id }, process.env.JWT_SECRET, {
             expiresIn: "2h",
           });
           res.status(200).json({
@@ -80,7 +80,7 @@ const login = (req, res) => {
       });
     } else {
       res.json({
-        message: "No user found",
+        message: "No student found",
       });
     }
   });
