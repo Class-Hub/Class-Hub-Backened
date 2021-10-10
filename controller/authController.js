@@ -24,7 +24,14 @@ const register = (req, res) => {
             });
           }
           let student = new Student({
+            name: req.body.name,
             email: req.body.email,
+            roll: req.body.roll,
+            batch: req.body.batch,
+            course: req.body.course,
+            dob: req.body.dob,
+            phn: req.body.phn,
+            photo: req.body.photo,
             password: hashedPassword,
           });
           student
