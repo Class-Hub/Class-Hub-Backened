@@ -1,20 +1,25 @@
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
+const Teacher = require("./Teacher");
+const Student = require("./Student");
 
-const batchSchema = new Schema({
-    name: String,
-    noStudent: Number,
-    teachers: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: Teacher
+const subjectSchema = new Schema({
+  subName: String,
+  noStudent: Number,
+  teachers: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: Teacher,
     },
-    students: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: Student
+  ],
+  students: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: Student,
     },
+  ],
+});
 
-})
+const Subject = mongoose.model("Subject", subjectSchema);
 
-const User = mongoose.model('Batch',batchSchema)
-
-module.exports = User
+module.exports = Subject;

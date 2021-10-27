@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const Subject = require("./Subject");
 
 const studentSchema = new Schema({
   name: {
@@ -16,12 +17,22 @@ const studentSchema = new Schema({
   },
   roll: String,
   batch: String,
-  course: String,
+  branch: String,
   dob: String,
   phn: String,
   photo: String,
+  attendance: [
+    {
+      sub: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: Subject,
+      },
+      totalPresent: Number,
+      totalDays: Number,
+    },
+  ],
 });
 
-const User = mongoose.model("Student", studentSchema);
+const Student = mongoose.model("Student", studentSchema);
 
-module.exports = User;
+module.exports = Student;

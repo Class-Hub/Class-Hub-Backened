@@ -4,7 +4,7 @@ const dotenv = require("dotenv");
 const morgan = require("morgan");
 const connectDB = require("./config/db");
 const auth = require("./routes/auth");
-const video = require('./routes/video');
+const video = require("./routes/video");
 const { authPass } = require("./controller/authController");
 
 dotenv.config({ path: "./config/config.env" });
@@ -20,8 +20,10 @@ if (process.env.NODE_ENV === "development") {
 }
 
 app.use("/", auth);
+app.use("/teacher", require("./routes/teacher"));
+app.use("/subject", require("./routes/subject"));
 app.use("/student", require("./routes/student"));
-app.use('/',video)
+app.use("/", video);
 
 const PORT = process.env.PORT || 8000;
 

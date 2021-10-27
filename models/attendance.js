@@ -14,6 +14,6 @@ const batchSchema = new Schema({
   },
 });
 
-const Batch = mongoose.model("Batch", batchSchema);
+const User = mongoose.model("Batch", batchSchema);
 
-module.exports = Batch;
+module.exports = User;
