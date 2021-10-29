@@ -20,6 +20,8 @@ if (process.env.NODE_ENV === "development") {
 }
 
 app.use("/", auth);
+app.use("/thumbnail", express.static("thumbnail"));
+app.use("/Lectures", express.static("Lectures"));
 app.use("/teacher", require("./routes/teacher"));
 app.use("/subject", require("./routes/subject"));
 app.use("/student", require("./routes/student"));
