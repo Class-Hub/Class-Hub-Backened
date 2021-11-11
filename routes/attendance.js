@@ -1,8 +1,8 @@
-const express = require("express");
-const { markAttendance } = require("../controller/attendance");
+// const express = require("express");
+// const { markAttendance } = require("../controller/attendance");
 
-const router = express.Router();
+// const router = express.Router();
 
-router.get("/mark", markAttendance);
+// router.get("/mark", markAttendance);
 
-module.exports = router;
+// module.exports = router;
