@@ -289,11 +289,11 @@ const authPass = async (req, res, next) => {
   // 4) Check if user changed password after the token was issued
 
   // GRANT ACCESS TO PROTECTED ROUTE
-  // req.user = currentUser;
-  // console.log("This is req.user from middlwwRE", req.user);
-  // res.locals.user = currentUser;
-  // console.log("Successfully Passed Middlware");
-  // next();
+  req.user = currentUser;
+  console.log("This is req.user from middlwwRE", req.user);
+  res.locals.user = currentUser;
+  console.log("Successfully Passed Middlware");
+  next();
 };
 
 module.exports = {
