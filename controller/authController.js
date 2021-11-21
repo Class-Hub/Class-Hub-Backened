@@ -274,21 +274,22 @@ const authPass = async (req, res, next) => {
     if (currentTeacher) {
       req.user = currentTeacher;
       res.locals.user = currentTeacher;
-      next();
+      return next();
     } else {
       return res.status(404).json({
         message: "You aren't Logged In",
       });
     }
   }
-  console.log(currentUser);
 
   // 4) Check if user changed password after the token was issued
 
   // GRANT ACCESS TO PROTECTED ROUTE
-  req.user = currentUser;
-  res.locals.user = currentUser;
-  next();
+  // req.user = currentUser;
+  // console.log("This is req.user from middlwwRE", req.user);
+  // res.locals.user = currentUser;
+  // console.log("Successfully Passed Middlware");
+  // next();
 };
 
 module.exports = {

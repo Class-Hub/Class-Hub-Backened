@@ -28,6 +28,14 @@ app.use("/", auth);
 app.use("/teacher", require("./routes/teacher"));
 app.use("/subject", require("./routes/subject"));
 app.use("/student", require("./routes/student"));
+
+/* --------------------------- GoogleClass Routes --------------------------- */
+
+const classRouter = require("./routes/Class/class.router");
+const classworkRouter = require("./routes/Class/classwork.router");
+
+app.use("/class", classRouter);
+app.use("/classwork", classworkRouter);
 app.use("/", video);
 
 app.use("/assets", express.static(path.join(__dirname, "/src/assets")));
