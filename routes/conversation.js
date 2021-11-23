@@ -1,10 +1,21 @@
-const Conversation = require("../models/conversations");
+const Conversation = require("../models/conversation");
 const Student = require("../models/Student");
 const Teacher = require("../models/Teacher");
 
 const router = require("express").Router();
 
 //new conv
+
+router.get("/getTeachers", async (req, res) => {
+  const teachers = await Teacher.find();
+  if (teachers.length == 0) {
+    return res.send("No Teacher Found");
+  }
+  res.json({
+    message: "Success",
+    data: teachers,
+  });
+});
 
 router.post("/", async (req, res) => {
   const newConversation = new Conversation({

@@ -17,6 +17,7 @@ exports.markAttendance = async (req, res) => {
         console.log("INside if");
         subject.totalPresent++;
         subject.totalDays++;
+        subject.isMarked = true;
       }
     });
     await student.save();
