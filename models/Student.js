@@ -29,6 +29,8 @@ const studentSchema = new Schema({
       },
       totalPresent: Number,
       totalDays: Number,
+      isActive: Boolean,
+      subName: String
     },
   ],
 });

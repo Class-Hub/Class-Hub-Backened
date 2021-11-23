@@ -111,7 +111,7 @@ const register = async (req, res) => {
 
       console.log("Thes", student);
       console.log(req.body.subName);
-
+      
       const subject = await Subject.findOne({ subName: req.body.subName });
       if (!subject) {
         let subject = new Subject({
@@ -137,6 +137,8 @@ const register = async (req, res) => {
           sub: subject._id,
           totalPresent: 0,
           totalDays: 0,
+          isActive: false,
+          subName: req.body.subName
         });
         console.log(student.attendance);
 
@@ -154,6 +156,8 @@ const register = async (req, res) => {
           sub: subject._id,
           totalPresent: 0,
           totalDays: 0,
+          isActive: false,
+          subName: req.body.subName
         });
         console.log(student.attendance);
 
@@ -285,11 +289,11 @@ const authPass = async (req, res, next) => {
   // 4) Check if user changed password after the token was issued
 
   // GRANT ACCESS TO PROTECTED ROUTE
-  // req.user = currentUser;
-  // console.log("This is req.user from middlwwRE", req.user);
-  // res.locals.user = currentUser;
-  // console.log("Successfully Passed Middlware");
-  // next();
+  req.user = currentUser;
+  console.log("This is req.user from middlwwRE", req.user);
+  res.locals.user = currentUser;
+  console.log("Successfully Passed Middlware");
+  next();
 };
 
 module.exports = {
