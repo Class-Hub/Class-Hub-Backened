@@ -128,34 +128,6 @@ router.delete("/students/delete", authPass, async (req, res) => {
   });
 });
 
-router.post("/students/remove", (req, res) => {
-  const { token, owner, student, _class } = req.body;
-  User.findOne({ _id: owner, token }, (err, user) => {
-    if (err) res.status(500).json("Something went wrong.");
-    else if (!user) res.status(403).json("Permission denied.");
-    else {
-      Class.findOne({ _id: _class }, (err, __class) => {
-        if (err) res.status(500).json("Something went wrong");
-        else if (!__class) res.status(400).json("Class not found.");
-        else {
-          if (__class.students.includes(student)) {
-            for (let i = 0; i < __class.students.length; i++) {
-              if (__class.students[i] === student) {
-                __class.students.splice(i, 1);
-                i--;
-              }
-            }
-          }
-          __class
-            .save()
-            .then(() => res.json("Success"))
-            .catch((err) => res.status(400).json("Something went wrong."));
-        }
-      });
-    }
-  });
-});
-
 router.patch("/update", authPass, async (req, res) => {
   const teacher = req.user;
   const { classId, title, description } = req.body;

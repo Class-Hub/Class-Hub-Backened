@@ -1,13 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const bodyParser = require("body-parser");
-const jsonParser = bodyParser.json();
-const User = require("../../server/models/user.model");
+const Student = require("../../models/Student");
+const Teacher = require("../../models/Teacher");
 const Class = require("../../models/class.model");
 const Classwork = require("../../models/classwork.model");
 const { nanoid } = require("nanoid");
 
-router.post("/create", jsonParser, (req, res) => {
+router.post("/create", (req, res) => {
   const { title, description, _class, type, author, duedate, token, options } =
     req.body;
   User.findOne({ _id: author, token }, (err, user) => {
@@ -39,7 +39,7 @@ router.post("/create", jsonParser, (req, res) => {
   });
 });
 
-router.get("/class/get/:class", jsonParser, (req, res) => {
+router.get("/class/get/:class", (req, res) => {
   const classId = req.params.class;
   Class.findOne({ _id: classId }, (err, _class) => {
     if (err) res.status(500).json("Something went wrong.");
@@ -55,14 +55,14 @@ router.get("/class/get/:class", jsonParser, (req, res) => {
   });
 });
 
-router.get("/get/:classwork", jsonParser, (req, res) => {
+router.get("/get/:classwork",  (req, res) => {
   const classwork = req.params.classwork;
   Classwork.findById(classwork)
     .then((result) => res.json(result))
     .catch(() => res.status(404).json("Classwork not found."));
 });
 
-router.post("/update/:id", jsonParser, (req, res) => {
+router.post("/update/:id",  (req, res) => {
   const { title, description, duedate, type, options, token } = req.body;
   const id = req.params.id;
   Classwork.findById(id, (err, classwork) => {
@@ -88,7 +88,7 @@ router.post("/update/:id", jsonParser, (req, res) => {
   });
 });
 
-router.post("/delete/:id", jsonParser, (req, res) => {
+router.post("/delete/:id",  (req, res) => {
   const { token, author } = req.body;
   const id = req.params.id;
   User.find({ token, _id: author }, (err, user) => {
@@ -102,7 +102,7 @@ router.post("/delete/:id", jsonParser, (req, res) => {
   });
 });
 
-router.post("/submit/answer", jsonParser, (req, res) => {
+router.post("/submit/answer", (req, res) => {
   const { answer, classwork, student, token } = req.body;
   User.findOne({ token, _id: student }, (err, user) => {
     if (err) res.status(500).json("Something went wrong.");
@@ -131,7 +131,7 @@ router.post("/submit/answer", jsonParser, (req, res) => {
   });
 });
 
-router.get("/get/answer/:classwork", jsonParser, (req, res) => {
+router.get("/get/answer/:classwork",  (req, res) => {
   const classworkId = req.params.classwork;
   Classwork.findById(classworkId, (err, classwork) => {
     if (err) res.status(500).json("Something went wrong.");
