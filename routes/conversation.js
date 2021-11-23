@@ -1,4 +1,4 @@
-const Conversation = require("../models/conversation");
+const Conversation = require("../models/conversations");
 const Student = require("../models/Student");
 const Teacher = require("../models/Teacher");
 
@@ -45,4 +45,5 @@ router.get("/get/:id", async (req, res) => {
     res.status(400).send(error);
   }
 });
+
 module.exports = router;
