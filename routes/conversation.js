@@ -1,6 +1,7 @@
 const Conversation = require("../models/conversation");
 const Student = require("../models/Student");
 const Teacher = require("../models/Teacher");
+const { authPass } = require("../controller/authController");
 
 const router = require("express").Router();
 
@@ -55,6 +56,32 @@ router.get("/get/:id", async (req, res) => {
   } catch (error) {
     res.status(400).send(error);
   }
+});
+
+router.post("/getAllConversation", authPass, async (req, res) => {
+  var conversations = [];
+  console.log("inside getAllConversation");
+  const user = req.user;
+  console.log(user);
+  const conversation = await Conversation.find();
+  console.log("This is all conversations", conversation);
+
+  conversation.forEach((convo) => {
+    console.log("This is Convo", convo);
+    convo.members.forEach((member) => {
+      console.log("This is Member", JSON.stringify(member));
+      console.log(JSON.stringify(user._id));
+      if (JSON.stringify(member) == JSON.stringify(user._id)) {
+        console.log("inside if");
+        conversations.push(conversation);
+      }
+    });
+  });
+  console.log(conversations);
+  if (!conversation) {
+    return res.status(404).send("Not found");
+  }
+  res.status(200).json({ conversations });
 });
 
 module.exports = router;
