@@ -80,6 +80,7 @@ const teacherRegister = async (req, res) => {
 };
 
 const register = async (req, res) => {
+  console.log("INside ROute");
   try {
     const student = await Student.findOne({ email: req.body.email });
     if (student) {
@@ -88,94 +89,115 @@ const register = async (req, res) => {
         message: "Email already exists",
       });
     } else {
-      bcrypt.hash(req.body.password, 10, async function (err, hashedPassword) {
-        if (err) {
-          res.status(400).json({
-            status: "error",
-            message: "Failed",
+      bcrypt.hash(
+        req.body.password,
+        10,
+        async function (err, hashedPassword) {
+          if (err) {
+            res.status(400).json({
+              status: "error",
+              message: "Failed",
+            });
+          }
+
+          let student = new Student({
+            name: req.body.name,
+            email: req.body.email,
+            roll: req.body.roll,
+            batch: req.body.batch,
+            branch: req.body.branch,
+            dob: req.body.dob,
+            phn: req.body.phn,
+            photo: req.body.photo,
+            password: hashedPassword,
+          });
+          let arr = [];
+          // await student.save();
+
+          console.log("Thes", student._id);
+          console.log(req.body.subName);
+
+          let subjects = req.body.subName;
+          for (var i = 0; i < req.body.subName.length; i++) {
+            var sub = subjects[i];
+            console.log("FOr", sub);
+            const subject = await Subject.findOne({ subName: sub });
+            if (!subject) {
+              let subject = new Subject({
+                subName: sub,
+              });
+
+              console.log(subject);
+              console.log(student.id);
+
+              subject.students.push(student._id);
+
+              // console.log(subject1);
+              // // if (!subject1) {
+              // //   return res.status(400).json({
+              // //     message: "Unable To Save",
+              // //   });
+              // // }
+              console.log("This is subject", subject._id);
+              student.attendance.push({
+                sub: subject._id,
+                totalPresent: 0,
+                totalDays: 0,
+                isActive: false,
+                isMarked: false,
+                subName: sub,
+              });
+              console.log(student.attendance);
+              await student.save();
+
+              // return res.status(200).json({
+              //   status: "success",
+              //   message: "Successfully registered Teacher and Created New Subject",
+              // });
+              console.log(" INside if Success");
+            } else {
+              // subject.students.push(student._id);
+              // await subject.save();
+              console.log("This is subject", subject._id);
+              arr.push({
+                sub: subject._id,
+                totalPresent: 0,
+                totalDays: 0,
+                isActive: false,
+                isMarked: false,
+                subName: sub,
+              });
+              console.log("This is arr inside", arr);
+
+              // student.attendance.push({
+              //   sub: subject._id,
+              //   totalPresent: 0,
+              //   totalDays: 0,
+              //   isActive: false,
+              //   isMarked: false,
+              //   subName: sub,
+              // });9
+
+              // await student.save();
+              console.log(student.attendance);
+            }
+            // await student.save();
+          }
+
+          // await subjects.forEach(async (sub) => {});
+          console.log("Outside Loop");
+          console.log("This is arr outside", arr);
+
+          student.attendance = arr;
+
+          await student.save();
+          console.log("Student Attendance ", student.attendance);
+
+          res.status(200).json({
+            status: "success",
+            message: "Successfully registered Teacher and Saved Subject  ",
           });
         }
-
-        let student = new Student({
-          name: req.body.name,
-          email: req.body.email,
-          roll: req.body.roll,
-          batch: req.body.batch,
-          branch: req.body.branch,
-          dob: req.body.dob,
-          phn: req.body.phn,
-          photo: req.body.photo,
-          password: hashedPassword,
-        });
-
-        // await student.save();
-
-        console.log("Thes", student._id);
-        console.log(req.body.subName);
-
-        let subjects = req.body.subName;
-
-        subjects.map(async (sub) => {
-          const subject = await Subject.findOne({ subName: sub });
-          if (!subject) {
-            let subject = new Subject({
-              subName: sub,
-            });
-            await subject.save();
-
-            console.log(subject);
-            console.log(student.id);
-
-            subject.students.push(student._id);
-
-            const subject1 = await subject.save();
-
-            console.log(subject1);
-            // if (!subject1) {
-            //   return res.status(400).json({
-            //     message: "Unable To Save",
-            //   });
-            // }
-            console.log("This is subject", subject._id);
-            student.attendance.push({
-              sub: subject._id,
-              totalPresent: 0,
-              totalDays: 0,
-              isActive: false,
-              isMarked: false,
-              subName: sub,
-            });
-            console.log(student.attendance);
-            await student.save();
-
-            // return res.status(200).json({
-            //   status: "success",
-            //   message: "Successfully registered Teacher and Created New Subject",
-            // });
-            console.log("Success");
-          }
-          // subject.students.push(student._id);
-          else {
-            await subject.save();
-            console.log("This is subject", subject._id);
-            student.attendance.push({
-              sub: subject._id,
-              totalPresent: 0,
-              totalDays: 0,
-              isActive: false,
-              isMarked: false,
-              subName: sub,
-            });
-            console.log(student.attendance);
-          }
-          await student.save();
-        });
-        console.log("Paras Thind doubt solver " + student.attendance);
-
-        res.status(200).json({
-          status: "success",
-          message: "Successfully registered Teacher and Saved Subject  ",
-        });
 
         // try {
         //   await subject.save();
@@ -196,7 +218,7 @@ const register = async (req, res) => {
         //     status: "success",
         //     message: "Successfully registered Teacher and Saved Subject  ",
         //   });
-      });
+      );
     }
   } catch (error) {
     res.status(500).json({
