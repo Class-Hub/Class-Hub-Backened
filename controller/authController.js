@@ -111,7 +111,6 @@ const register = async (req, res) => {
 
       console.log("Thes", student);
       console.log(req.body.subName);
-
       const subject = await Subject.findOne({ subName: req.body.subName });
       if (!subject) {
         let subject = new Subject({

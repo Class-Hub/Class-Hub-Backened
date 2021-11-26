@@ -18,7 +18,7 @@ const teacherSchema = new Schema({
     type: String,
     required: true,
   },
-  batch: [],
+  batch: [String],
   dob: String,
   phn: String,
   photo: String,
