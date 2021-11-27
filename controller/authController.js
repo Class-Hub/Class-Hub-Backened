@@ -6,77 +6,77 @@ const Subject = require("../models/Subject");
 const jwt = require("jsonwebtoken");
 
 const teacherRegister = async (req, res) => {
-  const teacher = await Teacher.findOne({ email: req.body.email });
-  if (teacher) {
-    return res.status(400).json({
-      status: "error",
-      message: "Email already exists",
-    });
-  } else {
-    bcrypt.hash(req.body.password, 10, async function (err, hashedPassword) {
-      if (err) {
-        res.status(400).json({
-          status: "error",
-          message: "Failed",
-        });
-      }
-
-      let teacher = new Teacher({
-        name: req.body.name,
-        email: req.body.email,
-        batch: req.body.batch,
-        dob: req.body.dob,
-        phn: req.body.phn,
-        photo: req.body.photo,
-        password: hashedPassword,
+  try{
+    const teacher = await Teacher.findOne({ email: req.body.email });
+    if (teacher) {
+      return res.status(400).json({
+        status: "error",
+        message: "Email already exists",
       });
-
-      await teacher.save();
-
-      console.log("Thes", teacher);
-      console.log(req.body.subName);
-
-      const subject = await Subject.findOne({ subName: req.body.subName });
-      if (!subject) {
-        let subject = new Subject({
-          subName: req.body.subName,
-        });
-        await subject.save();
-
-        console.log(subject);
-        console.log(teacher.id);
-
-        subject.teachers.push(teacher._id);
-
-        const subject1 = await subject.save();
-
-        console.log(subject1);
-        if (!subject1) {
-          return res.status(400).json({
-            message: "Unable To Save",
+    } else {
+      bcrypt.hash(req.body.password, 10, async function (err, hashedPassword) {
+        if (err) {
+          res.status(400).json({
+            status: "error",
+            message: "Failed",
           });
         }
-        return res.status(200).json({
-          status: "success",
-          message: "Successfully registered Teacher and Created New Subject",
+  
+        let teacher = new Teacher({
+          name: req.body.name,
+          email: req.body.email,
+          batch: req.body.batch,
+          dob: req.body.dob,
+          phn: req.body.phn,
+          photo: req.body.photo,
+          password: hashedPassword,
         });
-      }
-      subject.teachers.push(teacher._id);
-      try {
-        await subject.save();
+  
+        await teacher.save();
 
-        res.status(200).json({
-          status: "success",
-          message: "Successfully registered Teacher and Saved Subject  ",
-        });
-      } catch (error) {
+        let subjects = req.body.subName;
+        for (var i = 0; i < req.body.subName.length; i++) {
+          var sub = subjects[i];
+          console.log("FOr", sub);
+          const subject = await Subject.findOne({ subName: sub });
+          if (!subject) {
+            let subject = new Subject({
+              subName: sub,
+            });
+            console.log(subject);
+            console.log(teacher.id);
+            
+            subject.teachers.push(teacher._id);
+            await subject.save();
+            console.log("This is subject", subject._id);
+            teacher.teachingSubs.push({
+              sub: subject._id,
+              subName: sub,
+            });
+            await teacher.save();
+          } else {
+            subject.teachers.push(teacher._id);
+            await subject.save();
+            console.log("This is subject", subject._id);
+            teacher.teachingSubs.push({
+              sub: subject._id,
+              subName: sub,
+            });
+            await teacher.save();
+          }
+        }
+      })
+      res.status(200).json({
+        status: "success",
+        message: "Successfully registered Teacher and Saved Subject  ",
+      });
+    }
+  }catch (error) {
         res.status(500).json({
           status: "Failure",
           message: error,
         });
       }
-    });
-  }
 };
 
 const register = async (req, res) => {
@@ -126,18 +126,11 @@ const register = async (req, res) => {
               let subject = new Subject({
                 subName: sub,
               });
-
               console.log(subject);
               console.log(student.id);
-
+              
               subject.students.push(student._id);
-
-              // console.log(subject1);
-              // // if (!subject1) {
-              // //   return res.status(400).json({
-              // //     message: "Unable To Save",
-              // //   });
-              // // }
+              await subject.save();
               console.log("This is subject", subject._id);
               student.attendance.push({
                 sub: subject._id,
@@ -149,17 +142,11 @@ const register = async (req, res) => {
               });
               console.log(student.attendance);
               await student.save();
-
-              // return res.status(200).json({
-              //   status: "success",
-              //   message: "Successfully registered Teacher and Created New Subject",
-              // });
-              console.log(" INside if Success");
             } else {
-              // subject.students.push(student._id);
-              // await subject.save();
+              subject.students.push(student._id);
+              await subject.save();
               console.log("This is subject", subject._id);
-              arr.push({
+              student.attendance.push({
                 sub: subject._id,
                 totalPresent: 0,
                 totalDays: 0,
@@ -167,62 +154,21 @@ const register = async (req, res) => {
                 isMarked: false,
                 subName: sub,
               });
-              console.log("This is arr inside", arr);
-
-              // student.attendance.push({
-              //   sub: subject._id,
-              //   totalPresent: 0,
-              //   totalDays: 0,
-              //   isActive: false,
-              //   isMarked: false,
-              //   subName: sub,
-              // });9
-
-              // await student.save();
+              await student.save();
               console.log(student.attendance);
             }
-            // await student.save();
           }
-
-          // await subjects.forEach(async (sub) => {});
-          console.log("Outside Loop");
-          console.log("This is arr outside", arr);
-
-          student.attendance = arr;
-
-          await student.save();
-          console.log("Student Attendance ", student.attendance);
 
           res.status(200).json({
             status: "success",
-            message: "Successfully registered Teacher and Saved Subject  ",
+            message: "Successfully registered Student and Saved Subject  ",
           });
         }
-
-        // try {
-        //   await subject.save();
-        //   console.log("This is subject", subject._id);
-        //   student.attendance.push({
-        //     sub: subject._id,
-        //     totalPresent: 0,
-        //     totalDays: 0,
-        //     isActive: false,
-        //     isMarked: false,
-        //     subName: req.body.subName,
-        //   });
-        //   console.log(student.attendance);
-
-        //   await student.save();
-
-        //   res.status(200).json({
-        //     status: "success",
-        //     message: "Successfully registered Teacher and Saved Subject  ",
-        //   });
       );
     }
   } catch (error) {
     res.status(500).json({
-      status: "Failure",
+      status: "Failure to regiter",
       message: error,
     });
   }

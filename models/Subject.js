@@ -1,7 +1,5 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const Teacher = require("./Teacher");
-const Student = require("./Student");
 
 const subjectSchema = new Schema({
   subName: String,
@@ -9,13 +7,13 @@ const subjectSchema = new Schema({
   teachers: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: Teacher,
+      ref: 'Teacher',
     },
   ],
   students: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: Student,
+      ref: 'Student',
     },
   ],
 });

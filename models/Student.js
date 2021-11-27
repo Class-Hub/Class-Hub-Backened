@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const Subject = require("./Subject");
 
 const studentSchema = new Schema({
   name: {
@@ -25,7 +24,7 @@ const studentSchema = new Schema({
     {
       sub: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: Subject,
+        ref: 'Subject',
       },
       totalPresent: Number,
       totalDays: Number,
