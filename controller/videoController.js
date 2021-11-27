@@ -13,7 +13,7 @@ const uploadVideo = (req, res, next) => {
       "/videos/" +
       req.file.filename.replace(/ /g, "_"),
     thumbnail_path:
-      "http://localhost:" + process.env.PORT + "/thumbnail/" + req.headers.subName + ".jpg"
+      "http://localhost:" + process.env.PORT + "/thumbnail/" + req.headers.subname + ".jpg"
   });
   videoDetails
     .save()
