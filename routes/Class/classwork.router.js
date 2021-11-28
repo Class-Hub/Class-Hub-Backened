@@ -6,138 +6,154 @@ const Teacher = require("../../models/Teacher");
 const Class = require("../../models/class.model");
 const Classwork = require("../../models/classwork.model");
 const { nanoid } = require("nanoid");
+const { authPass } = require("../../controller/authController");
 
-router.post("/create", (req, res) => {
-  const { title, description, _class, type, author, duedate, token, options } =
-    req.body;
-  User.findOne({ _id: author, token }, (err, user) => {
-    if (err) res.status(500).json("Something went wrong.");
-    else if (!user) res.status(404).json("Author not found.");
+router.post("/create",authPass, async (req, res) => {
+  const { title, description, classId, type, duedate, options } = req.body;
+    const teacher = req.user
+    console.log(req.user)
+    if (!teacher) 
+    {
+      res.status(404).json("Teacher not found.");
+    }
     else {
-      Class.findOne({ _id: _class }, (err, __class) => {
-        if (err) res.status(500).json("Something went wrong.");
-        else if (!__class) res.status(404).json("Class not found.");
+      const c = await Class.findOne({ _id: classId })
+        if (!c) 
+        {
+          res.status(404).json("Class not found.");
+        }
         else {
           const newClasswork = new Classwork({
             title,
             description,
-            class: _class,
+            class:c,
             types: type,
             duedate,
             options,
-            author,
+            author: teacher,
           });
-          newClasswork
-            .save()
-            .then(() =>
-              res.json({ message: "Classwork created.", id: newClasswork._id })
-            )
-            .catch((err) => res.status(400).json("Error: " + err));
+          const saved = await newClasswork.save()
+          if(saved){
+            res.json({ message: "Classwork created.", id: newClasswork._id })
+          }
+          else{
+            res.status(400).json("Error: ")
+          }
         }
-      });
     }
   });
-});
 
-router.get("/class/get/:class", (req, res) => {
+router.get("/class/get/:class",authPass, async (req, res) => {
   const classId = req.params.class;
-  Class.findOne({ _id: classId }, (err, _class) => {
-    if (err) res.status(500).json("Something went wrong.");
-    else if (!_class) res.status(404).json("Class not found.");
-    else {
-      Classwork.find({ class: classId })
-        .sort({ _id: -1 })
-        .then((classworks) => {
-          if (classworks) res.json(classworks);
-        })
-        .catch(() => res.status(500).json("Something went wrong."));
+  const c = Class.findOne({ _id: classId }) 
+    if (!c)
+    {
+      res.status(404).json("Class not found.");
     }
-  });
-});
-
-router.get("/get/:classwork",  (req, res) => {
-  const classwork = req.params.classwork;
-  Classwork.findById(classwork)
-    .then((result) => res.json(result))
-    .catch(() => res.status(404).json("Classwork not found."));
-});
-
-router.post("/update/:id",  (req, res) => {
-  const { title, description, duedate, type, options, token } = req.body;
-  const id = req.params.id;
-  Classwork.findById(id, (err, classwork) => {
-    if (err) res.status(500).json("Something went wrong.");
-    else if (!classwork) res.status(404).json("Classwork not found.");
     else {
-      User.findOne({ _id: classwork.author, token }, (err, user) => {
-        if (err) res.status(500).json("Something went wrong.");
-        else if (!user) res.status(403).json("Permission denied.");
+      const classwork = await Classwork.find({ class: classId }).sort({ _id: -1 })
+      if (classwork){
+        res.status(200).json(classwork)
+      }
+      else{
+        res.status(500).json("Something went wrong.")
+      }
+    }
+});
+
+router.get("/get/:classwork",authPass,  async (req, res) => {
+  const classwork = req.params.classwork;
+  const cw = await Classwork.findById(classwork)
+  if(cw){
+    res.json(cw)
+  }
+  else{
+    res.status(404).json("Classwork not found.")
+  }
+})
+
+router.patch("/update/:classwork",authPass, async (req, res) => {
+  const { title, description, duedate, type, options} = req.body;
+  const id = req.params.classwork;
+  const classwork = await Classwork.findById(id)
+  console.log(classwork)
+    if (!classwork) 
+    {
+      res.status(404).json("Classwork not found.");
+    }
+    else {
+      const teacher = req.user
+        if (!teacher)
+        {
+          res.status(403).json("Permission denied.");
+        }
         else {
           classwork.title = title;
           classwork.description = description;
           classwork.duedate = duedate;
           classwork.type = type;
           classwork.options = options;
-          classwork
-            .save()
-            .then(() => res.json({ message: "Success", classwork }))
-            .catch((err) => res.status(400).json("Error: " + err));
+          const saved = classwork.save()
+          if(saved){
+            res.json({ message: "Success", classwork })
+          }
+          else{
+            res.status(400).json("Error: ")
+          }
         }
-      });
     }
-  });
 });
 
-router.post("/delete/:id",  (req, res) => {
-  const { token, author } = req.body;
-  const id = req.params.id;
-  User.find({ token, _id: author }, (err, user) => {
-    if (err) res.status(500).json("Something went wrong.");
-    else if (!user) res.status(403).json("Permission denied.");
-    else {
-      Classwork.findByIdAndDelete(id)
-        .then(() => res.json("Success"))
-        .catch((err) => res.status(400).json("Error: " + err));
+router.delete("/delete/:classwork",authPass, async (req, res) => {
+  const teacher = req.user
+  const id = req.params.classwork;
+  console.log(id)
+  if(!teacher){
+    res.status(403).json("Permission denied.");
+  }
+  else {
+      const cw = await Classwork.findByIdAndRemove(id)
+      // console.log(cw)
+        if(cw) res.json("Successfully deleted classwork")
+        else res.status(400).json("Error: ")
     }
   });
-});
 
-router.post("/submit/answer", (req, res) => {
-  const { answer, classwork, student, token } = req.body;
-  User.findOne({ token, _id: student }, (err, user) => {
-    if (err) res.status(500).json("Something went wrong.");
-    else if (!user) res.status(403).json("Permission denied.");
+router.post("/submit/answer",authPass, async (req, res) => {
+  const { answer, classwork} = req.body;
+  const student = req.user
+
+  if(!student){
+    res.status(403).json("Permission denied.");
+  }
     else {
-      Classwork.findOne({ _id: classwork }, (err, classwork) => {
-        if (err) res.status(500).json("Something went wrong.");
-        else if (!classwork) res.status(404).json("Classwork not found.");
+      const cw = await Classwork.findOne({ _id: classwork })
+        if (!cw) res.status(404).json("Classwork not found.");
         else {
           let response = {
             _id: nanoid(20),
-            student: user,
+            student,
             answer,
             answeredOn: new Date(),
           };
-          classwork.answer.push(response);
-          classwork
-            .save()
-            .then(() =>
-              res.json({ message: "Success", answers: classwork.answer })
-            )
-            .catch((err) => res.status(400).json("Error: " + err));
+          cw.answer.push(response);
+          const saved = cw.save()
+          if(saved){
+            res.json({ message: "Success", answers: cw.answer })
+          }
+          else res.status(400).json("Error: " )
         }
-      });
-    }
-  });
-});
+      }
+    });
 
-router.get("/get/answer/:classwork",  (req, res) => {
+router.get("/get/answer/:classwork",authPass, async  (req, res) => {
   const classworkId = req.params.classwork;
-  Classwork.findById(classworkId, (err, classwork) => {
-    if (err) res.status(500).json("Something went wrong.");
-    else if (!classwork) res.status(404).json("Classwork not found.");
-    else res.json(classwork.answer);
+  const cw = await Classwork.findById(classworkId) 
+
+  if(!cw){
+    res.status(404).json("Classwork not found.");
+  }
+    else res.json(cw.answer);
   });
-});
 
 module.exports = router;
