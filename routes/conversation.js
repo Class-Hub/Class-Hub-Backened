@@ -73,7 +73,7 @@ router.post("/getAllConversation", authPass, async (req, res) => {
       console.log(JSON.stringify(user._id));
       if (JSON.stringify(member) == JSON.stringify(user._id)) {
         console.log("inside if");
-        conversations.push(conversation);
+        conversations.push(convo._id);
       }
     });
   });
