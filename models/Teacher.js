@@ -18,10 +18,19 @@ const teacherSchema = new Schema({
     type: String,
     required: true,
   },
-  batch: [String],
+  batch: String,
   dob: String,
   phn: String,
   photo: String,
+  teachingSubs: [
+    {
+      sub: {
+        type: Schema.Types.ObjectId,
+        ref: 'Subject',
+      },
+      subName: String,
+    }
+  ],
 });
 
 const Teacher = mongoose.model("Teacher", teacherSchema);
