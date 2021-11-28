@@ -7,14 +7,35 @@ const router = require("express").Router();
 
 //new conv
 
-router.get("/getTeachers", async (req, res) => {
+router.get("/getTeachers/:userId", async (req, res) => {
   const teachers = await Teacher.find();
+  const conversation = await Conversation.find({
+    members: { $in: [req.params.userId] },
+  });
+  var fullPremiumData = [];
+
+  console.log("This is Conversation of the user", conversation);
+  for (var i = 0; i < conversation.length; i++) {
+    const convo = conversation[i];
+
+    const teacherId = convo.members[1];
+    console.log("This is Convo", convo);
+
+    const teacher = await Teacher.findById(teacherId);
+
+    var data = {
+      teacher: teacher,
+      convoId: convo._id,
+    };
+    fullPremiumData.push(data);
+  }
+
   if (teachers.length == 0) {
     return res.send("No Teacher Found");
   }
   res.json({
     message: "Success",
-    data: teachers,
+    data: fullPremiumData,
   });
 });
 
@@ -34,10 +55,12 @@ router.post("/", async (req, res) => {
 //get conv of a user
 
 router.get("/:userId", async (req, res) => {
+  console.log(req.params.userId);
   try {
     const conversation = await Conversation.find({
       members: { $in: [req.params.userId] },
     });
+
     res.status(200).json(conversation);
   } catch (err) {
     res.status(500).json(err);
