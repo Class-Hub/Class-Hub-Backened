@@ -7,6 +7,36 @@ const router = require("express").Router();
 
 //new conv
 
+router.get("/getStudents/:userId", async (req, res) => {
+  const students = await Student.find();
+  console.log("All teachers", students);
+  const conversation = await Conversation.find({
+    members: { $in: [req.params.userId] },
+  });
+  var fullPremiumData = [];
+  //   console.log("This is Conversation of the user", conversation);
+  for (var i = 0; i < conversation.length; i++) {
+    const convo = conversation[i];
+
+    const studentId = convo.members[0];
+
+    console.log("Before", fullPremiumData);
+    const student = await Student.findOne({ _id: studentId });
+    console.log("Student", student);
+    var data = {
+      teacher: student,
+      convoId: convo._id,
+    };
+    fullPremiumData.push(data);
+    //   console.log("This is fulldata", fullPremiumData);
+  }
+
+  res.json({
+    message: "Success",
+    data: fullPremiumData,
+  });
+});
+
 router.get("/getTeachers/:userId", async (req, res) => {
   const teachers = await Teacher.find();
   console.log("All teachers", teachers);
