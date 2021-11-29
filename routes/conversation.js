@@ -15,6 +15,7 @@ router.get("/getTeachers/:userId", async (req, res) => {
   var fullPremiumData = [];
 
   console.log("This is Conversation of the user", conversation);
+  
   for (var i = 0; i < conversation.length; i++) {
     const convo = conversation[i];
 
