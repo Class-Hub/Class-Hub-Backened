@@ -35,6 +35,21 @@ router.get("/get/studied/:user", (req, res) => {
     .catch(() => res.status(400).json("Something went wrong"));
 });
 
+router.get("/getAllCLass", async (req, res) => {
+  const classes = await Class.find();
+
+  if (!classes) {
+    return res.status(404).json({
+      message: "No classes found",
+    });
+  }
+
+  res.status(201).json({
+    message: "Success",
+    classes,
+  });
+});
+
 router.post("/create", authPass, async (req, res) => {
   console.log("This is inside controller", req.user);
   const teacher = req.user;
