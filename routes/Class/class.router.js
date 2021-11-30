@@ -35,20 +35,38 @@ router.get("/get/studied/:user", (req, res) => {
     .catch(() => res.status(400).json("Something went wrong"));
 });
 
-router.get("/getAllCLass", async (req, res) => {
-  const classes = await Class.find();
+router.get("/getAllCLass", authPass, async (req, res) => {
+  const user = req.user;
+  if (user.role == "admin") {
+    const classes = await Class.find({ owner: { $in: [user] } });
 
-  if (!classes) {
-    return res.status(404).json({
-      message: "No classes found",
+    if (!classes) {
+      return res.status(404).json({
+        message: "No classes found",
+      });
+    }
+
+    res.status(201).json({
+      message: "Classes for teacher ",
+      classes,
+    });
+  } else {
+    const classes = await Class.find();
+
+    if (!classes) {
+      return res.status(404).json({
+        message: "No classes found",
+      });
+    }
+
+    res.status(201).json({
+      message: " All Classes for student ",
+      classes,
     });
   }
-
-  res.status(201).json({
-    message: "Success",
-    classes,
-  });
 });
+
+router.post("/");
 
 router.post("/create", authPass, async (req, res) => {
   console.log("This is inside controller", req.user);
