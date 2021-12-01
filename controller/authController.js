@@ -189,7 +189,7 @@ const login = async (req, res) => {
         }
         if (result) {
           var token = jwt.sign({ id: student._id }, process.env.JWT_SECRET, {
-            expiresIn: "2h",
+            expiresIn: "2d",
           });
           res.status(200).json({
             status: "success",

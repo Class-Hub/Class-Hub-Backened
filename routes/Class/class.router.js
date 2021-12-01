@@ -97,29 +97,36 @@ router.post("/create", authPass, async (req, res) => {
 });
 
 router.post("/students/register", authPass, async (req, res) => {
-  const teacher = req.user;
-  const { classId, studentId } = req.body;
-  const student = await Student.findById(studentId);
-  if (!student) {
-    return res.status(403).json("U arent logged in.");
-  }
-  if (!student) {
-    return res.status(500).json("Something went wrong.");
-  } else {
-    const CClass = await Class.findById(classId);
-    if (!CClass) {
-      res.status(400).json("Class not found.");
-    } else {
-      if (CClass.students.includes(student)) {
-        return res
-          .status(400)
-          .json("The Student  already has a role in this class.");
-      }
-      CClass.students.push(student);
-      await CClass.save();
-
-      res.json({ message: "Success", class: CClass });
+  try{
+    const teacher = req.user;
+    const { classId, studentEmail } = req.body;
+    console.log("studentId", studentEmail);
+    const student = await Student.findOne({email: studentEmail})
+    console.log(student._id)
+    // console.log(classId)
+    if (!teacher) {
+      return res.status(403).json("U arent logged in.");
     }
+    if (!student) {
+      return res.status(500).json("Something went wrong.");
+    } else {
+      const CClass = await Class.findById(classId);
+      if (!CClass) {
+        res.status(400).json("Class not found.");
+      } else {
+        if (CClass.students.includes(student._id)) {
+          return res
+            .status(400)
+            .json("The Student  already has a role in this class.");
+        }
+        CClass.students.push(student._id);
+        await CClass.save();
+  
+        res.json({ message: "Success", class: CClass });
+  }
+    }
+  }catch (error) {
+    res.status(500).json(error);
   }
 });
 
