@@ -32,7 +32,7 @@ exports.passwordUpdate = async (req, res) => {
     if (match) {
       const hash = bcrypt.hashSync(newPassword, saltRounds);
       user.password = hash;
-      user.save();
+      await user.save();
       res.json({
         user,
       });
