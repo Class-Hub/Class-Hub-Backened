@@ -51,7 +51,7 @@ router.get("/class/get/:class",authPass, async (req, res) => {
       res.status(404).json("Class not found.");
     }
     else {
-      const classwork = await Classwork.find({ class: classId }).sort({ _id: -1 })
+      const classwork = await Classwork.find({ class: classId }).populate("author").sort({ _id: -1 })
       if (classwork){
         res.status(200).json(classwork)
       }
