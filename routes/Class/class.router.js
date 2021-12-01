@@ -9,7 +9,7 @@ const { authPass } = require("../../controller/authController");
 
 router.get("/get/class/:classId", (req, res) => {
   const classId = req.params.classId;
-  Class.findById(classId)
+  Class.findById(classId).populate("students")
     .then((_class) => res.json(_class))
     .catch(() => res.status(400).json("Something went wrong"));
 });
@@ -100,7 +100,7 @@ router.post("/students/register", authPass, async (req, res) => {
   const teacher = req.user;
   const { classId, studentId } = req.body;
   const student = await Student.findById(studentId);
-  if (!teacher) {
+  if (!student) {
     return res.status(403).json("U arent logged in.");
   }
   if (!student) {
