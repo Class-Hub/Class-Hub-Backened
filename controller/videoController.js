@@ -8,12 +8,12 @@ const uploadVideo = (req, res, next) => {
     uploader_name: req.headers.uploader_name,
     upload_title: req.file.filename.replace(/ /g, "_"),
     video_path:
-      "http://localhost:" +
+      "https://class-hub-backend.herokuapp.com/:" +
       process.env.PORT +
       "/videos/" +
       req.file.filename.replace(/ /g, "_"),
     thumbnail_path:
-      "http://localhost:" + process.env.PORT + "/thumbnail/" + req.headers.subname + ".jpg"
+      "https://class-hub-backend.herokuapp.com/" + process.env.PORT + "/thumbnail/" + req.headers.subname + ".jpg"
   });
   videoDetails
     .save()
