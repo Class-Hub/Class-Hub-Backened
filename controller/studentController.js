@@ -1,4 +1,5 @@
 const bcrypt = require("bcrypt");
+const Subject = require("../models/Subject");
 
 exports.profile = (req, res) => {
   try {
@@ -40,5 +41,33 @@ exports.passwordUpdate = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(error);
+  }
+};
+
+exports.getStudentBySubjectId = async (req, res) => {
+  console.log("Inside routee");
+  const id = req.params.subjectId;
+  try {
+    const subject = await Subject.findById(id).populate(
+      "students"
+      //   {
+      //   path: "students",
+      //   populate: {
+      //     path: "students",
+      //     model: "Student",
+      //   },
+      // }
+    );
+    console.log(subject);
+    if (!subject) {
+      return res.status(404).send("No subject found");
+    }
+    const students = subject.students;
+    res.json({
+      students,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
   }
 };
