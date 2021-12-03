@@ -1,6 +1,26 @@
 const Student = require("../models/Student");
 const Subject = require("../models/Subject");
 
+exports.disabled = async (req, res) => {
+  try{
+    const subjectId = req.body.subjectId;
+    const student = await Student.find({});
+
+    for (let i = 0; i < student.length; i++) {
+      student[i].attendance.forEach((subject) => {
+        if (subject.sub.equals(subjectId)) {
+          subject.isActive = false;
+        }
+      });
+      await student[i].save();
+    }
+    res.json({ message: "attendance inactive" });
+  }catch(err){
+    console.log(err);
+    res.status(500).send("Server Error");
+  }
+}
+
 exports.daysTotal = async (req, res) => {
   try {
     const subjectId = req.body.subjectId;
