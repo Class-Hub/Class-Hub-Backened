@@ -1,7 +1,7 @@
 const Student = require("../models/Student");
 const Subject = require("../models/Subject");
 
-exports.totalDays = async (req, res) => {
+exports.daysTotal = async (req, res) => {
   try{
     const subjectId = req.body.subjectId;
     const student = await Student.find({})
