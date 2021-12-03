@@ -2,25 +2,27 @@ const Student = require("../models/Student");
 const Subject = require("../models/Subject");
 
 exports.daysTotal = async (req, res) => {
-  try{
+  try {
     const subjectId = req.body.subjectId;
-    const student = await Student.find({})
+    const student = await Student.find({});
 
-    for(let i = 0; i < student.length; i++){
+    for (let i = 0; i < student.length; i++) {
       student[i].attendance.forEach((subject) => {
         if (subject.sub.equals(subjectId)) {
           subject.totalDays++;
           subject.isActive = true;
-          expDate = Date.now() + 300000
+          subject.isMarked = false;
+          expDate = Date.now() + 10000;
         }
       });
+      await student[i].save();
     }
-    await student.save();
-    res.json({student})
-}catch{
-  res.status(500).send("Server Error")
-}
-}
+    res.json({ message: "attendence updated" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Server Error");
+  }
+};
 
 exports.markAttendance = async (req, res) => {
   try {
