@@ -33,7 +33,7 @@ exports.daysTotal = async (req, res) => {
           subject.totalDays++;
           subject.isActive = true;
           subject.isMarked = false;
-          subject.expDate = Date.now() + 20000;
+          subject.expDate = Date.now() + 300000;
         }
       });
       await student[i].save();
