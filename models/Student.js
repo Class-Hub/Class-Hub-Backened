@@ -31,7 +31,7 @@ const studentSchema = new Schema({
       isActive: Boolean,
       isMarked: Boolean,
       subName: String,
-      expDate: Date,
+      expDate: String,
     },
   ],
 });

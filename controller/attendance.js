@@ -10,6 +10,7 @@ exports.disabled = async (req, res) => {
       student[i].attendance.forEach((subject) => {
         if (subject.sub.equals(subjectId)) {
           subject.isActive = false;
+          subject.expDate = '';
         }
       });
       await student[i].save();
@@ -32,7 +33,7 @@ exports.daysTotal = async (req, res) => {
           subject.totalDays++;
           subject.isActive = true;
           subject.isMarked = false;
-          expDate = Date.now() + 10000;
+          subject.expDate = Date.now() + 20000;
         }
       });
       await student[i].save();
