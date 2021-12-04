@@ -1,6 +1,50 @@
 const Student = require("../models/Student");
 const Subject = require("../models/Subject");
 
+exports.disabled = async (req, res) => {
+  try{
+    const subjectId = req.body.subjectId;
+    const student = await Student.find({});
+
+    for (let i = 0; i < student.length; i++) {
+      student[i].attendance.forEach((subject) => {
+        if (subject.sub.equals(subjectId)) {
+          subject.isActive = false;
+          subject.expDate = '';
+        }
+      });
+      await student[i].save();
+    }
+    res.json({ message: "attendance inactive" });
+  }catch(err){
+    console.log(err);
+    res.status(500).send("Server Error");
+  }
+}
+
+exports.daysTotal = async (req, res) => {
+  try {
+    const subjectId = req.body.subjectId;
+    const student = await Student.find({});
+
+    for (let i = 0; i < student.length; i++) {
+      student[i].attendance.forEach((subject) => {
+        if (subject.sub.equals(subjectId)) {
+          subject.totalDays++;
+          subject.isActive = true;
+          subject.isMarked = false;
+          subject.expDate = Date.now() + 300000;
+        }
+      });
+      await student[i].save();
+    }
+    res.json({ message: "attendence updated" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Server Error");
+  }
+};
+
 exports.markAttendance = async (req, res) => {
   try {
     console.log("INside route");
@@ -16,7 +60,6 @@ exports.markAttendance = async (req, res) => {
       if (subject.sub.equals(subjectId)) {
         console.log("INside if");
         subject.totalPresent++;
-        subject.totalDays++;
         subject.isMarked = true;
       }
     });
