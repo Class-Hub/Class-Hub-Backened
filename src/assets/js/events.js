@@ -61,7 +61,7 @@ window.addEventListener("load", () => {
       sessionStorage.setItem("username", yourName);
 
       //create room link
-      let roomLink = `${location.origin}?room=${roomName
+      let roomLink = `${location.origin}/s?room=${roomName
         .trim()
         .replace(" ", "_")}_${helpers.generateRandomString()}`;
 

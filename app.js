@@ -6,7 +6,7 @@ const morgan = require("morgan");
 const connectDB = require("./config/db");
 const auth = require("./routes/auth");
 const app = express();
-var cors = require('cors')
+var cors = require("cors");
 let server = require("http").Server(app);
 let io = require("socket.io")(server);
 let stream = require("./src/ws/stream");
@@ -17,7 +17,7 @@ dotenv.config({ path: "./config/config.env" });
 connectDB();
 
 app.use(express.urlencoded({ extended: false }));
-app.use(cors())
+app.use(cors());
 app.use(express.json());
 
 if (process.env.NODE_ENV === "development") {
@@ -46,7 +46,7 @@ app.use("/", video);
 
 app.use("/assets", express.static(path.join(__dirname, "/src/assets")));
 
-app.get("/video", (req, res) => {
+app.get("/s", (req, res) => {
   res.sendFile(__dirname + "/src/index.html");
 });
 
