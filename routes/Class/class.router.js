@@ -9,7 +9,8 @@ const { authPass } = require("../../controller/authController");
 
 router.get("/get/class/:classId", (req, res) => {
   const classId = req.params.classId;
-  Class.findById(classId).populate("students")
+  Class.findById(classId)
+    .populate("students")
     .then((_class) => res.json(_class))
     .catch(() => res.status(400).json("Something went wrong"));
 });
@@ -51,7 +52,10 @@ router.get("/getAllCLass", authPass, async (req, res) => {
       classes,
     });
   } else {
-    const classes = await Class.find();
+    const classes = await Class.find({
+      students: { $in: [user] },
+    });
+    // const classes = await Class.find();
 
     if (!classes) {
       return res.status(404).json({
@@ -97,12 +101,12 @@ router.post("/create", authPass, async (req, res) => {
 });
 
 router.post("/students/register", authPass, async (req, res) => {
-  try{
+  try {
     const teacher = req.user;
     const { classId, studentEmail } = req.body;
     console.log("studentId", studentEmail);
-    const student = await Student.findOne({email: studentEmail})
-    console.log(student._id)
+    const student = await Student.findOne({ email: studentEmail });
+    console.log(student._id);
     // console.log(classId)
     if (!teacher) {
       return res.status(403).json("U arent logged in.");
@@ -121,11 +125,11 @@ router.post("/students/register", authPass, async (req, res) => {
         }
         CClass.students.push(student._id);
         await CClass.save();
-  
+
         res.json({ message: "Success", class: CClass });
-  }
+      }
     }
-  }catch (error) {
+  } catch (error) {
     res.status(500).json(error);
   }
 });
