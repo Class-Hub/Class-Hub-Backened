@@ -46,7 +46,7 @@ app.use("/", video);
 
 app.use("/assets", express.static(path.join(__dirname, "/src/assets")));
 
-app.get("/s", (req, res) => {
+app.get("/liveClass", (req, res) => {
   res.sendFile(__dirname + "/src/index.html");
 });
 
