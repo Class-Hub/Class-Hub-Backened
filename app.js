@@ -53,8 +53,8 @@ app.use("/assets", express.static(path.join(__dirname, "/src/assets")));
 
 app.get("/liveClass", (req, res) => {
   const name = process.env.getName;
-  console.log(name)
-  res.render("index",{name});
+  console.log(name);
+  res.render("index", { name });
 });
 
 io.of("/stream").on("connection", stream);
@@ -87,16 +87,18 @@ const getUser = (userId) => {
 
 var IO = require("socket.io")(Server, {
   cors: {
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST"]
-  }
+    origin: "https://classhub.netlify.app/",
+    methods: ["GET", "POST"],
+  },
 });
 
 IO.on("connection", (socket) => {
   console.log("User is connected", socket.id);
   //take userId and socketId from user
   socket.on("addUser", (userId) => {
-    addUser(userId, socket.id);
+    if (userId) {
+      addUser(userId, socket.id);
+    }
     IO.emit("getUsers", users);
     console.log(users);
   });
