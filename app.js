@@ -85,7 +85,12 @@ const getUser = (userId) => {
   return users.find((user) => user.userId === userId);
 };
 
-var IO = require("socket.io")(Server);
+var IO = require("socket.io")(Server, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"]
+  }
+});
 
 IO.on("connection", (socket) => {
   console.log("User is connected", socket.id);
@@ -97,9 +102,8 @@ IO.on("connection", (socket) => {
   });
 
   //send and get message
-  socket.on("sendMessage", (receiverId, senderId, text, test) => {
+  socket.on("sendMessage", (receiverId, senderId, text) => {
     console.log(senderId);
-    console.log(test);
     console.log(receiverId);
     console.log(users);
     const user = getUser(receiverId);
