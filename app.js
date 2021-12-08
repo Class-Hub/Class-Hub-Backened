@@ -87,7 +87,7 @@ const getUser = (userId) => {
 
 var IO = require("socket.io")(Server, {
   cors: {
-    origin: "https://classhub.netlify.app/",
+    origin: "*",
     methods: ["GET", "POST"],
   },
 });
