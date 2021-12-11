@@ -45,8 +45,8 @@ const teacherRegister = async (req, res) => {
             let subject = new Subject({
               subName: sub,
             });
-            console.log(subject);
-            console.log(teacher.id);
+            // console.log(subject);
+            // console.log(teacher.id);
 
             subject.teachers.push(teacher._id);
             await subject.save();
@@ -99,24 +99,52 @@ const register = async (req, res) => {
           });
         }
 
-        let student = new Student({
-          name: req.body.name,
-          email: req.body.email,
-          roll: req.body.roll,
-          batch: req.body.batch,
-          branch: req.body.branch,
-          dob: req.body.dob,
-          phn: req.body.phn,
-          photo: req.body.photo,
-          password: hashedPassword,
-        });
-        let arr = [];
-        // await student.save();
-
-        console.log("Thes", student._id);
-        console.log(req.body.subName);
+        // console.log("Thes", student._id);
+        // console.log(req.body.subName);
 
         let subjects = req.body.subName;
+        for (var i = 0; i < req.body.subName.length; i++) {
+          var sub = subjects[i];
+          // console.log("FOr", sub);
+          const subject = await Subject.findOne({ subName: sub });
+          if (!subject) {
+            let subject = new Subject({
+              subName: sub,
+            });
+            // console.log(subject);
+            // console.log(student.id);
+
+            subject.students.push(student._id);
+            await subject.save();
+            // console.log("This is subject", subject._id);
+            student.attendance.push({
+              sub: subject._id,
+              totalPresent: 0,
+              totalDays: 0,
+              isActive: false,
+              isMarked: false,
+              subName: sub,
+            });
+            // console.log(student.attendance);
+            await student.save();
+          } else {
+            subject.students.push(student._id);
+            await subject.save();
+            // console.log("This is subject", subject._id);
+            student.attendance.push({
+              sub: subject._id,
+              totalPresent: 0,
+              totalDays: 0,
+              isActive: false,
+              isMarked: false,
+              subName: sub,
+            });
+            await student.save();
+            console.log(student.attendance);
+          }
+        }
+
+        // let subjects = req.body.subName;
         for (var i = 0; i < req.body.subName.length; i++) {
           var sub = subjects[i];
           console.log("FOr", sub);
@@ -172,6 +200,8 @@ const register = async (req, res) => {
   }
 };
 
+// var getName;
+
 const login = async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
@@ -189,15 +219,9 @@ const login = async (req, res) => {
           var token = jwt.sign({ id: student._id }, process.env.JWT_SECRET, {
             expiresIn: "2d",
           });
-          const resp = await axios.get(
-            "http://localhost:8000/student/setCookie"
-          );
-          console.log(resp);
-          res.cookie("Name", student.name, {
-            // domain: ".class-hub-backend.herokuapp.com",
-            // path: "/",
-            httpOnly: true,
-          });
+          console.log("The is student naem", student.name);
+          process.env.getName = student.name;
+
           res.status(200).json({
             status: "success",
             message: "Logged In successfully",
@@ -229,8 +253,7 @@ const login = async (req, res) => {
           var token = jwt.sign({ id: teacher._id }, process.env.JWT_SECRET, {
             expiresIn: "2h",
           });
-          res.cookie("Name", teacher, { httpOnly: true });
-          console.log("Cookie Is Defined");
+          process.env.getName = teacher.name;
           res.status(200).json({
             status: "success",
             message: "Logged In successfully as A Teacher",
@@ -256,12 +279,12 @@ const authPass = async (req, res, next) => {
     req.headers.authorization &&
     req.headers.authorization.startsWith("Bearer")
   ) {
-    console.log("Inside If of auth Pass");
-    console.log(req.headers.authorization);
-    console.log(req.headers.authorization.startsWith("Bearer"));
+    // console.log("Inside If of auth Pass");
+    // console.log(req.headers.authorization);
+    // console.log(req.headers.authorization.startsWith("Bearer"));
 
     token = req.headers.authorization.split(" ")[1];
-    console.log(token);
+    // console.log(token);
   } else if (req.cookies.jwt) {
     token = req.cookies.jwt;
   }
@@ -274,7 +297,7 @@ const authPass = async (req, res, next) => {
 
   // 2) Verification token
   const decoded = await jwt.verify(token, process.env.JWT_SECRET);
-  console.log("This is decoded", decoded);
+  // console.log("This is decoded", decoded);
 
   // 3) Check if user still exists
   const currentUser = await Student.findById(decoded.id);
@@ -297,7 +320,7 @@ const authPass = async (req, res, next) => {
   // GRANT ACCESS TO PROTECTED ROUTE
 
   req.user = currentUser;
-  console.log("This is req.user from middlwwRE", req.user);
+  // console.log("This is req.user from middlwwRE", req.user);
   res.locals.user = currentUser;
   console.log("Successfully Passed Middlware");
   next();
