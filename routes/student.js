@@ -4,11 +4,30 @@ const {
   profile,
   passwordUpdate,
   getStudentBySubjectId,
+  getName,
 } = require("../controller/studentController");
 const router = express.Router();
-const { markAttendance, daysTotal, disabled } = require("../controller/attendance");
+const {
+  markAttendance,
+  daysTotal,
+  disabled,
+} = require("../controller/attendance");
 
+router.get("/setCookie", (req, res) => {
+  console.log("CookieRouter");
+  const x = 12;
+  res.cookie("X", x, {
+    domain: ".class-hub-backend.herokuapp.com",
+    path: "/liveClass",
+    httpOnly: true,
+  });
+
+  res.json({
+    msg: "ss",
+  });
+});
 router.get("/", authPass, profile);
+router.get("/getName", getName);
 router.post("/updatePassword", authPass, passwordUpdate);
 router.post("/mark", authPass, markAttendance);
 router.post("/dayTotal", authPass, daysTotal);

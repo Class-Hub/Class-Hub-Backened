@@ -17,6 +17,14 @@ exports.profile = (req, res) => {
   }
 };
 
+exports.getName = async (req, res) => {
+  const name = req.cookies["Name"];
+  console.log("This is name", name);
+  res.json({
+    name,
+  });
+};
+
 exports.passwordUpdate = async (req, res) => {
   const user = req.user;
   const saltRounds = 10;

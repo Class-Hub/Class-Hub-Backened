@@ -11,10 +11,13 @@ let server = require("http").Server(app);
 let io = require("socket.io")(server);
 let stream = require("./src/ws/stream");
 const video = require("./routes/video");
+var cookieParser = require("cookie-parser");
 const { authPass } = require("./controller/authController");
 
 dotenv.config({ path: "./config/config.env" });
 connectDB();
+
+app.use(cookieParser());
 
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
@@ -40,6 +43,7 @@ app.use("/class", classRouter);
 app.use("/classwork", classworkRouter);
 
 /* ------------------------------- Chat Routes ------------------------------ */
+
 app.use("/conversation", require("./routes/conversation"));
 app.use("/message", require("./routes/messages"));
 app.use("/", video);
@@ -47,6 +51,7 @@ app.use("/", video);
 app.use("/assets", express.static(path.join(__dirname, "/src/assets")));
 
 app.get("/liveClass", (req, res) => {
+  const { name } = req.body;
   res.sendFile(__dirname + "/src/index.html");
 });
 

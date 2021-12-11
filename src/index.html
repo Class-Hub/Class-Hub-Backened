@@ -21,6 +21,8 @@
     <script src='https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js'></script>
     <script src='https://cdn.rawgit.com/yahoo/xss-filters/master/dist/xss-filters.js'></script>
     <script src='assets/js/autolink.js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
 </head>
 
 <body>
@@ -174,3 +176,20 @@
 </body>
 
 </html>
+
+
+<script type="text/javascript">
+    console.log("Script Called");
+
+
+
+    async function codeAddress() {
+        const res = await axios({
+            method: "get",
+            url: "http://localhost:8000/student/getName",
+        });
+
+        console.log(res);
+    }
+    window.onload = codeAddress;
+</script>
