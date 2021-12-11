@@ -47,37 +47,49 @@ window.addEventListener("load", () => {
   });
 
   //When the 'Create room" is button is clicked
-  document.getElementById("create-room").addEventListener("click", (e) => {
-    e.preventDefault();
+  document
+    .getElementById("create-room")
+    .addEventListener("click", async (e) => {
+      e.preventDefault();
 
-    let roomName = document.querySelector("#room-name").value;
-    let yourName = document.querySelector("#your-name").value;
+      let roomName = document.querySelector("#room-name").value;
+      let yourName = document.querySelector("#your-name").value;
 
-    if (roomName && yourName) {
-      //remove error message, if any
-      document.querySelector("#err-msg").innerHTML = "";
+      if (roomName && yourName) {
+        //remove error message, if any
+        document.querySelector("#err-msg").innerHTML = "";
 
-      //save the user's name in sessionStorage
-      sessionStorage.setItem("username", yourName);
+        //save the user's name in sessionStorage
+        sessionStorage.setItem("username", yourName);
+        //create room link
+        let roomLink = `${location.origin}/liveClass?room=${roomName
+          .trim()
+          .replace(" ", "_")}_${helpers.generateRandomString()}`;
 
-      //create room link
-      let roomLink = `${location.origin}/liveClass?room=${roomName
-        .trim()
-        .replace(" ", "_")}_${helpers.generateRandomString()}`;
+        const id = process.env.id;
 
-      //show message with link to room
-      document.querySelector(
-        "#room-created"
-      ).innerHTML = `Room created . Click <a href='${roomLink}'>here</a> to enter room. 
+        const res = await axios.post(
+          "https://class-hub-backend.herokuapp.com/teacher/getLink",
+          {
+            link: roomLink,
+            id, // This is the body part
+          }
+        );
+        console.log(res);
+        //show message with link to room
+        document.querySelector(
+          "#room-created"
+        ).innerHTML = `Room created . Click <a href='${roomLink}'>here</a> to enter room. 
                 Share the room link given here <br>  ${roomLink}`;
 
-      //empty the values
-      document.querySelector("#room-name").value = "";
-      document.querySelector("#your-name").value = "";
-    } else {
-      document.querySelector("#err-msg").innerHTML = "All fields are required";
-    }
-  });
+        //empty the values
+        document.querySelector("#room-name").value = "";
+        document.querySelector("#your-name").value = "";
+      } else {
+        document.querySelector("#err-msg").innerHTML =
+          "All fields are required";
+      }
+    });
 
   //When the 'Enter room' button is clicked.
   document.getElementById("enter-room").addEventListener("click", (e) => {

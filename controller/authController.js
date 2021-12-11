@@ -254,6 +254,7 @@ const login = async (req, res) => {
             expiresIn: "2h",
           });
           process.env.getName = teacher.name;
+          process.env.id = teacher._id;
           res.status(200).json({
             status: "success",
             message: "Logged In successfully as A Teacher",

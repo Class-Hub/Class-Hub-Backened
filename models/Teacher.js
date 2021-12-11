@@ -22,14 +22,15 @@ const teacherSchema = new Schema({
   dob: String,
   phn: String,
   photo: String,
+  link: String,
   teachingSubs: [
     {
       sub: {
         type: Schema.Types.ObjectId,
-        ref: 'Subject',
+        ref: "Subject",
       },
       subName: String,
-    }
+    },
   ],
 });
 
