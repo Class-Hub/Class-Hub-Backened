@@ -1,5 +1,6 @@
 const express = require("express");
 const Subject = require("../models/Subject.js");
+const Teacher = require("../models/Teacher");
 
 const router = express.Router();
 
@@ -12,13 +13,27 @@ router.get("/", async (req, res) => {
 
 router.post("/getSubject", async (req, res) => {
   const subjectId = req.body.subjectId;
-  const subject = await Subject.findById(subjectId).populate("students").populate("teachers");
-  if(subject) {
+  const subject = await Subject.findById(subjectId)
+    .populate("students")
+    .populate("teachers");
+  if (subject) {
     res.json({ subject });
-  }
-  else{
+  } else {
     res.json({ message: "Subject not found" });
   }
-})
+});
+
+router.post("/getLivelink", async (req, res) => {
+  const subjectId = req.body.subjectId;
+  const subject = await Subject.findById(subjectId);
+  if (subject) {
+    const id = subject.teachers[0];
+    const teacher = await Teacher.findById(id);
+    const Link = teacher.link;
+    res.json({ Link });
+  } else {
+    res.json({ message: "Subject not found" });
+  }
+});
 
 module.exports = router;
