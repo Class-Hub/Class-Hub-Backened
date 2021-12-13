@@ -61,18 +61,19 @@ window.addEventListener("load", () => {
 
         //save the user's name in sessionStorage
         sessionStorage.setItem("username", yourName);
+
         //create room link
         let roomLink = `${location.origin}/liveClass?room=${roomName
           .trim()
           .replace(" ", "_")}_${helpers.generateRandomString()}`;
 
-        const id = process.env.id;
+        // const id = process.env.id;
 
         const res = await axios.post(
           "https://class-hub-backend.herokuapp.com/teacher/getLink",
           {
             link: roomLink,
-            id, // This is the body part
+            yourName, // This is the body part
           }
         );
         console.log(res);
