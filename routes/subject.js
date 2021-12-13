@@ -29,8 +29,13 @@ router.post("/getLivelink", async (req, res) => {
   if (subject) {
     const id = subject.teachers[0];
     const teacher = await Teacher.findById(id);
-    const Link = teacher.link;
-    res.json({ Link });
+    console.log(teacher)
+    if (teacher && teacher.link) {
+      const Link = teacher.link;
+      res.json({ Link });
+    } else {
+      res.json({ message: "No link found" });
+    }
   } else {
     res.json({ message: "Subject not found" });
   }
