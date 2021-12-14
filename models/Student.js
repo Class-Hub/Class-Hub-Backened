@@ -24,7 +24,7 @@ const studentSchema = new Schema({
     {
       sub: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Subject',
+        ref: "Subject",
       },
       totalPresent: Number,
       totalDays: Number,
@@ -32,6 +32,11 @@ const studentSchema = new Schema({
       isMarked: Boolean,
       subName: String,
       expDate: String,
+      expDateClass: String,
+      isClassStart: {
+        type: Boolean,
+        default: false,
+      },
     },
   ],
 });

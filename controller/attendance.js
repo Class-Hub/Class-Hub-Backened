@@ -2,7 +2,7 @@ const Student = require("../models/Student");
 const Subject = require("../models/Subject");
 
 exports.disabled = async (req, res) => {
-  try{
+  try {
     const subjectId = req.body.subjectId;
     const student = await Student.find({});
 
@@ -10,17 +10,38 @@ exports.disabled = async (req, res) => {
       student[i].attendance.forEach((subject) => {
         if (subject.sub.equals(subjectId)) {
           subject.isActive = false;
-          subject.expDate = '';
+          subject.expDate = "";
         }
       });
       await student[i].save();
     }
     res.json({ message: "attendance inactive" });
-  }catch(err){
+  } catch (err) {
     console.log(err);
     res.status(500).send("Server Error");
   }
-}
+};
+
+exports.classStart = async (req, res) => {
+  try {
+    const subjectId = req.body.subjectId;
+    const student = await Student.find({});
+
+    for (let i = 0; i < student.length; i++) {
+      student[i].attendance.forEach((subject) => {
+        if (subject.sub.equals(subjectId)) {
+          subject.isClassStart = true;
+          subject.expDateClass = Date.now() + 360000;
+        }
+      });
+      await student[i].save();
+    }
+    res.json({ message: "Class Active" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Server Error");
+  }
+};
 
 exports.daysTotal = async (req, res) => {
   try {
