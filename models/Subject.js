@@ -4,16 +4,17 @@ const Schema = mongoose.Schema;
 const subjectSchema = new Schema({
   subName: String,
   noStudent: Number,
+  isStart: Boolean,
   teachers: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Teacher',
+      ref: "Teacher",
     },
   ],
   students: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Student',
+      ref: "Student",
     },
   ],
 });

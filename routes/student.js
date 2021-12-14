@@ -11,6 +11,7 @@ const {
   markAttendance,
   daysTotal,
   disabled,
+  classStart,
 } = require("../controller/attendance");
 
 router.get("/setCookie", (req, res) => {
@@ -33,5 +34,6 @@ router.post("/mark", authPass, markAttendance);
 router.post("/dayTotal", authPass, daysTotal);
 router.post("/attendanceDisabled", authPass, disabled);
 router.post("/getStudent/:subjectId", authPass, getStudentBySubjectId);
+router.post('/classStart',authPass, classStart )
 
 module.exports = router;

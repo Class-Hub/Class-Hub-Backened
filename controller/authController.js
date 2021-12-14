@@ -104,8 +104,11 @@ const register = async (req, res) => {
           email: req.body.email,
           batch: req.body.batch,
           dob: req.body.dob,
+          roll: req.body.roll,
+          branch: req.body.branch,
           phn: req.body.phn,
           photo: req.body.photo,
+
           password: hashedPassword,
         });
 
