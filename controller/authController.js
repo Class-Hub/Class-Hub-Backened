@@ -99,52 +99,20 @@ const register = async (req, res) => {
           });
         }
 
-        // console.log("Thes", student._id);
-        // console.log(req.body.subName);
+        let student = new Student({
+          name: req.body.name,
+          email: req.body.email,
+          batch: req.body.batch,
+          dob: req.body.dob,
+          phn: req.body.phn,
+          photo: req.body.photo,
+          password: hashedPassword,
+        });
+
+        await student.save();
 
         let subjects = req.body.subName;
-        for (var i = 0; i < req.body.subName.length; i++) {
-          var sub = subjects[i];
-          // console.log("FOr", sub);
-          const subject = await Subject.findOne({ subName: sub });
-          if (!subject) {
-            let subject = new Subject({
-              subName: sub,
-            });
-            // console.log(subject);
-            // console.log(student.id);
 
-            subject.students.push(student._id);
-            await subject.save();
-            // console.log("This is subject", subject._id);
-            student.attendance.push({
-              sub: subject._id,
-              totalPresent: 0,
-              totalDays: 0,
-              isActive: false,
-              isMarked: false,
-              subName: sub,
-            });
-            // console.log(student.attendance);
-            await student.save();
-          } else {
-            subject.students.push(student._id);
-            await subject.save();
-            // console.log("This is subject", subject._id);
-            student.attendance.push({
-              sub: subject._id,
-              totalPresent: 0,
-              totalDays: 0,
-              isActive: false,
-              isMarked: false,
-              subName: sub,
-            });
-            await student.save();
-            console.log(student.attendance);
-          }
-        }
-
-        // let subjects = req.body.subName;
         for (var i = 0; i < req.body.subName.length; i++) {
           var sub = subjects[i];
           console.log("FOr", sub);
