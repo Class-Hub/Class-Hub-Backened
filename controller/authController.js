@@ -1,11 +1,10 @@
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+
 const Student = require("../models/Student");
 const Teacher = require("../models/Teacher");
-const bcrypt = require("bcrypt");
-const axios = require("axios");
 const Subject = require("../models/Subject");
-var cookieParser = require("cookie-parser");
 
-const jwt = require("jsonwebtoken");
 
 const teacherRegister = async (req, res) => {
   try {
@@ -16,7 +15,7 @@ const teacherRegister = async (req, res) => {
         message: "Email already exists",
       });
     } else {
-      bcrypt.hash(req.body.password, 10, async function (err, hashedPassword) {
+      bcrypt.hash(req.body.password, 12, async function (err, hashedPassword) {
         if (err) {
           res.status(400).json({
             status: "error",
@@ -39,7 +38,7 @@ const teacherRegister = async (req, res) => {
         let subjects = req.body.subName;
         for (var i = 0; i < req.body.subName.length; i++) {
           var sub = subjects[i];
-          console.log("FOr", sub);
+          // console.log("FOr", sub);
           const subject = await Subject.findOne({ subName: sub });
           if (!subject) {
             let subject = new Subject({
@@ -50,7 +49,7 @@ const teacherRegister = async (req, res) => {
 
             subject.teachers.push(teacher._id);
             await subject.save();
-            console.log("This is subject", subject._id);
+            // console.log("This is subject", subject._id);
             teacher.teachingSubs.push({
               sub: subject._id,
               subName: sub,
@@ -59,7 +58,7 @@ const teacherRegister = async (req, res) => {
           } else {
             subject.teachers.push(teacher._id);
             await subject.save();
-            console.log("This is subject", subject._id);
+            // console.log("This is subject", subject._id);
             teacher.teachingSubs.push({
               sub: subject._id,
               subName: sub,
@@ -82,7 +81,7 @@ const teacherRegister = async (req, res) => {
 };
 
 const register = async (req, res) => {
-  console.log("INside ROute");
+  // console.log("INside ROute");
   try {
     const student = await Student.findOne({ email: req.body.email });
     if (student) {
@@ -91,7 +90,7 @@ const register = async (req, res) => {
         message: "Email already exists",
       });
     } else {
-      bcrypt.hash(req.body.password, 10, async function (err, hashedPassword) {
+      bcrypt.hash(req.body.password, 12, async function (err, hashedPassword) {
         if (err) {
           res.status(400).json({
             status: "error",
@@ -118,18 +117,18 @@ const register = async (req, res) => {
 
         for (var i = 0; i < req.body.subName.length; i++) {
           var sub = subjects[i];
-          console.log("FOr", sub);
+          // console.log("FOr", sub);
           const subject = await Subject.findOne({ subName: sub });
           if (!subject) {
             let subject = new Subject({
               subName: sub,
             });
-            console.log(subject);
-            console.log(student.id);
+            // console.log(subject);
+            // console.log(student.id);
 
             subject.students.push(student._id);
             await subject.save();
-            console.log("This is subject", subject._id);
+            // console.log("This is subject", subject._id);
             student.attendance.push({
               sub: subject._id,
               totalPresent: 0,
@@ -138,12 +137,12 @@ const register = async (req, res) => {
               isMarked: false,
               subName: sub,
             });
-            console.log(student.attendance);
+            // console.log(student.attendance);
             await student.save();
           } else {
             subject.students.push(student._id);
             await subject.save();
-            console.log("This is subject", subject._id);
+            // console.log("This is subject", subject._id);
             student.attendance.push({
               sub: subject._id,
               totalPresent: 0,
@@ -153,7 +152,7 @@ const register = async (req, res) => {
               subName: sub,
             });
             await student.save();
-            console.log(student.attendance);
+            // console.log(student.attendance);
           }
         }
 
@@ -165,7 +164,7 @@ const register = async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({
-      status: "Failure to regiter",
+      status: "Failed to regiter",
       message: error,
     });
   }
@@ -190,7 +189,7 @@ const login = async (req, res) => {
           var token = jwt.sign({ id: student._id }, process.env.JWT_SECRET, {
             expiresIn: "2d",
           });
-          console.log("The is student naem", student.name);
+          // console.log("The is student naem", student.name);
           process.env.getName = student.name;
 
           res.status(200).json({
@@ -201,12 +200,12 @@ const login = async (req, res) => {
         } else {
           res.status(400).json({
             status: "error",
-            message: "Credentials Not Correct",
+            message: "Incorrect Credentials",
           });
         }
       });
     } else {
-      console.log("Inside Else");
+      // console.log("Inside Else");
       const teacher = await Teacher.findOne({ email });
       if (!teacher) {
         return res.status(404).json({
@@ -228,13 +227,13 @@ const login = async (req, res) => {
           process.env.id = teacher._id;
           res.status(200).json({
             status: "success",
-            message: "Logged In successfully as A Teacher",
+            message: "Logged In successfully as a Teacher",
             token,
           });
         } else {
           res.status(400).json({
             status: "error",
-            message: "Credentials Not Correct",
+            message: "Incorrect Credentials",
           });
         }
       });
@@ -294,7 +293,7 @@ const authPass = async (req, res, next) => {
   req.user = currentUser;
   // console.log("This is req.user from middlwwRE", req.user);
   res.locals.user = currentUser;
-  console.log("Successfully Passed Middlware");
+  // console.log("Successfully Passed Middlware");
   next();
 };
 

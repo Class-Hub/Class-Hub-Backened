@@ -1,4 +1,5 @@
 const bcrypt = require("bcrypt");
+
 const Subject = require("../models/Subject");
 
 exports.profile = (req, res) => {
@@ -13,13 +14,13 @@ exports.profile = (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(error);
+    res.status(500).json(error);
   }
 };
 
-exports.getName = async (req, res) => {
+exports.getName = (req, res) => {
   const name = req.cookies["Name"];
-  console.log("This is name", name);
+  // console.log("This is name", name);
   res.json({
     name,
   });
@@ -27,20 +28,17 @@ exports.getName = async (req, res) => {
 
 exports.passwordUpdate = async (req, res) => {
   const user = req.user;
-  const saltRounds = 10;
   const { currentPassword, newPassword } = req.body;
   try {
-    const user = req.user;
     if (!user) {
       return res.status(404).send("User Not Found");
     }
 
     const match = await bcrypt.compare(currentPassword, user.password);
-    console.log(match);
+    // console.log(match);
 
     if (match) {
-      const hash = bcrypt.hashSync(newPassword, saltRounds);
-      user.password = hash;
+      user.password = await bcrypt.hash(newPassword, 12);
       await user.save();
       res.json({
         user,
@@ -48,12 +46,12 @@ exports.passwordUpdate = async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-    res.status(error);
+    res.status(500).json(error);
   }
 };
 
 exports.getStudentBySubjectId = async (req, res) => {
-  console.log("Inside routee");
+  // console.log("Inside routee");
   const id = req.params.subjectId;
   try {
     const subject = await Subject.findById(id).populate(
@@ -66,7 +64,7 @@ exports.getStudentBySubjectId = async (req, res) => {
       //   },
       // }
     );
-    console.log(subject);
+    // console.log(subject);
     if (!subject) {
       return res.status(404).send("No subject found");
     }

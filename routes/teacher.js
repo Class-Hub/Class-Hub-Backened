@@ -2,6 +2,7 @@ const express = require("express");
 const { authPass } = require("../controller/authController");
 const { profile } = require("../controller/teacherController");
 const Teacher = require("../models/Teacher");
+
 const router = express.Router();
 
 router.get("/", authPass, profile);

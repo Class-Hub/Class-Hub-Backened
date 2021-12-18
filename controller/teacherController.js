@@ -1,6 +1,6 @@
 exports.profile = (req, res) => {
   try {
-    console.log("INside route");
+    // console.log("INside route");
     const user = req.user;
     if (!user) {
       return res.status(404).send("Teacher Not Found");
@@ -11,6 +11,6 @@ exports.profile = (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(error);
+    res.status(500).send('Error');
   }
 };
