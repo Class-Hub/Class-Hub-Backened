@@ -2,9 +2,10 @@ const express = require('express');
 const router = express.Router();
 const videoController = require('../controller/videoController')
 const upload = require('../middleware/multer')
+const { authPass } = require("../controller/authController");
 
 
 router.post('/upload',upload.single('file'), videoController.uploadVideo)
-router.get('/videoList',videoController.videoShow)
+router.get('/videoList',authPass,videoController.videoShow)
 
 module.exports = router;

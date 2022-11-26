@@ -86,7 +86,7 @@ const removeUser = (socketId) => {
 };
 
 const getUser = (userId) => {
-  return users.find((user) => user.userId === userId);
+  return users.filter((user) => user.userId === userId);
 };
 
 var IO = require("socket.io")(Server, {
@@ -111,9 +111,9 @@ IO.on("connection", (socket) => {
   socket.on("sendMessage", (receiverId, senderId, text) => {
     console.log(senderId);
     console.log(receiverId);
-    console.log(users);
+    console.log("Users",users);
     const user = getUser(receiverId);
-    console.log(user);
+    console.log("single user",user);
     IO.to(user.socketId).emit("getMessage", {
       sender: senderId,
       text,
