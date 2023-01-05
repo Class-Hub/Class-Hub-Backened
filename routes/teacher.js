@@ -1,6 +1,6 @@
 const express = require("express");
 const { authPass } = require("../controller/authController");
-const { profile } = require("../controller/teacherController");
+const { profile,getAll } = require("../controller/teacherController");
 const Teacher = require("../models/Teacher");
 const router = express.Router();
 
@@ -23,5 +23,7 @@ router.post("/getLink", async (req, res) => {
     return res.status(500).send(error);
   }
 });
+
+router.get("/getAll",authPass,getAll);
 
 module.exports = router;

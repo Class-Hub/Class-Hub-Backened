@@ -61,6 +61,23 @@ app.get("/liveClass", (req, res) => {
   res.render("index", { name });
 });
 
+const pdf = require('html-pdf');
+const markSheetTemp = require('./controller/document');
+
+app.post('/create-pdf', (req, res) => {
+  pdf.create(markSheetTemp(req.body), {}).toFile('certificate.pdf', (err) => {
+      if (err) {
+          res.send(Promise.reject());
+      }
+
+      res.send(Promise.resolve());
+  });
+});
+
+app.get('/fetch-pdf', (req, res) => {
+  res.sendFile(`${__dirname}/certificate.pdf`)
+})
+
 io.of("/stream").on("connection", stream);
 
 const PORT = process.env.PORT || 8000;
