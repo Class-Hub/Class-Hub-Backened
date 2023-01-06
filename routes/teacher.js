@@ -1,6 +1,6 @@
 const express = require("express");
 const { authPass } = require("../controller/authController");
-const { profile,getAll } = require("../controller/teacherController");
+const { profile,getAll,vlab,newVlab } = require("../controller/teacherController");
 const Teacher = require("../models/Teacher");
 const router = express.Router();
 
@@ -25,5 +25,8 @@ router.post("/getLink", async (req, res) => {
 });
 
 router.get("/getAll",authPass,getAll);
+
+router.get("/vlab",authPass,vlab);
+router.post("/newVlab",newVlab);
 
 module.exports = router;
