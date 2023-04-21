@@ -61,6 +61,23 @@ app.get("/liveClass", (req, res) => {
   res.render("index", { name });
 });
 
+const pdf = require('html-pdf');
+const markSheetTemp = require('./controller/document');
+
+app.post('/create-pdf', (req, res) => {
+  pdf.create(markSheetTemp(req.body), {}).toFile('certificate.pdf', (err) => {
+    if (err) {
+      res.send(Promise.reject());
+    }
+
+    res.send(Promise.resolve());
+  });
+});
+
+app.get('/fetch-pdf', (req, res) => {
+  res.sendFile(`${__dirname}/certificate.pdf`)
+})
+
 io.of("/stream").on("connection", stream);
 
 const PORT = process.env.PORT || 8000;
@@ -86,7 +103,7 @@ const removeUser = (socketId) => {
 };
 
 const getUser = (userId) => {
-  return users.find((user) => user.userId === userId);
+  return users.filter((user) => user.userId === userId);
 };
 
 var IO = require("socket.io")(Server, {
@@ -111,12 +128,9 @@ IO.on("connection", (socket) => {
   socket.on("sendMessage", (receiverId, senderId, text) => {
     console.log(senderId);
     console.log(receiverId);
-    console.log(users);
+    console.log("Users", users);
     const user = getUser(receiverId);
-    if (!user) {
-      return;
-    }
-    console.log(user);
+    console.log("single user", user);
     IO.to(user.socketId).emit("getMessage", {
       sender: senderId,
       text,
