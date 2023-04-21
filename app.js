@@ -113,6 +113,9 @@ IO.on("connection", (socket) => {
     console.log(receiverId);
     console.log(users);
     const user = getUser(receiverId);
+    if (!user) {
+      return;
+    }
     console.log(user);
     IO.to(user.socketId).emit("getMessage", {
       sender: senderId,
